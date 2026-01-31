@@ -12,7 +12,7 @@ Skald is an AI-native product development platform. This document provides an ov
 | [Insights](insights/entities/_overview.md) | Atomic UX Research: Experiments, Facts, Insights, Recommendations | ✓ Documented |
 | [Strategy](strategy/entities/_overview.md) | Strategic pillars, OKRs, time horizons | ✓ Documented |
 | [Planning](planning/entities/_overview.md) | Releases, Backlog Items, Sprints, Teams | ✓ Documented |
-| [Architecture](architecture/entities/_overview.md) | ADRs, tech stack, system design decisions | Pending |
+| [Architecture](architecture/entities/_overview.md) | ADRs, tech stack | ✓ Documented |
 | [Testing](testing/entities/_overview.md) | Acceptance tests tied to Examples | ✓ Documented (TBD details) |
 
 ## Cross-Domain Relationships
