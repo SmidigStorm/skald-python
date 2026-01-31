@@ -4,7 +4,7 @@
 
 {% block breadcrumb %}
 <div class="breadcrumb">
-    <a href="#">Products</a>
+    <a href="{% url 'core:home' %}">Products</a>
     <span>›</span>
     <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
     <span>›</span>
