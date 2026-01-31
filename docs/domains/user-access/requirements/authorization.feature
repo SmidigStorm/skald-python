@@ -7,6 +7,19 @@ Feature: Authorization
   # - What distinguishes Product Manager from Product Contributor?
   #   (Currently they seem to have the same permissions)
 
+  Rule: Only staff users can access Django admin
+
+    Scenario: System administrator can access Django admin
+      Given I am logged in as a system administrator
+      When I visit the Django admin page
+      Then I see the Django admin interface
+
+    Scenario: Normal user cannot access Django admin
+      Given I am logged in as a product manager of "Acme Project"
+      And I am not a staff user
+      When I visit the Django admin page
+      Then I am redirected to the Django admin login page
+
   Rule: System administrators have full access to everything
 
     Scenario: System administrator can manage users

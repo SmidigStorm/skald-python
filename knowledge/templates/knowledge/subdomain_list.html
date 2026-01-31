@@ -1,0 +1,40 @@
+{% extends "knowledge/base.html" %}
+
+{% block title %}SubDomains - {{ domain.name }} - {{ product.name }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="#">Products</a>
+    <span>›</span>
+    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
+    <span>›</span>
+    <strong>{{ domain.name }}</strong>
+    <span>›</span>
+    <strong>SubDomains</strong>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>SubDomains</h1>
+<p>Manage subdomains for <strong>{{ domain.name }}</strong></p>
+
+<p><a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn">+ New SubDomain</a></p>
+
+{% if subdomains %}
+    {% for subdomain in subdomains %}
+    <div class="card">
+        <h3><a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">{{ subdomain.name }}</a></h3>
+        <p>{{ subdomain.description|default:"No description" }}</p>
+        <div class="card-actions">
+            <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">View Capabilities</a>
+            <a href="{% url 'knowledge:subdomain_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">Edit</a>
+            <a href="{% url 'knowledge:subdomain_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>No subdomains yet. Create your first subdomain to further organize this domain.</p>
+    </div>
+{% endif %}
+{% endblock %}

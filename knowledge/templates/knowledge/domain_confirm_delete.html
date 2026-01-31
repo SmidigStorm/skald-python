@@ -1,0 +1,37 @@
+{% extends "knowledge/base.html" %}
+
+{% block title %}Delete {{ object.name }} - {{ product.name }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="#">Products</a>
+    <span>›</span>
+    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
+    <span>›</span>
+    <strong>Delete {{ object.name }}</strong>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Delete Domain</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="card">
+        <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+
+        {% if object.subdomains.count %}
+        <p style="color: #dc3545;">
+            <strong>Warning:</strong> This will also delete {{ object.subdomains.count }} subdomain(s)
+            and all their capabilities.
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger">Delete Domain</button>
+        <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

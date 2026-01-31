@@ -1,0 +1,41 @@
+{% extends "knowledge/base.html" %}
+
+{% block title %}Capabilities - {{ subdomain.name }} - {{ product.name }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="#">Products</a>
+    <span>›</span>
+    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
+    <span>›</span>
+    <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a>
+    <span>›</span>
+    <strong>{{ subdomain.name }}</strong>
+    <span>›</span>
+    <strong>Capabilities</strong>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Capabilities</h1>
+<p>Manage capabilities for <strong>{{ subdomain.name }}</strong></p>
+
+<p><a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn">+ New Capability</a></p>
+
+{% if capabilities %}
+    {% for capability in capabilities %}
+    <div class="card">
+        <h3>{{ capability.name }}</h3>
+        <p>{{ capability.description|default:"No description" }}</p>
+        <div class="card-actions">
+            <a href="{% url 'knowledge:capability_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}">Edit</a>
+            <a href="{% url 'knowledge:capability_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>No capabilities yet. Create your first capability to define what the system can do.</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "knowledge/base.html" %}
+
+{% block title %}Domains - {{ product.name }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="#">Products</a>
+    <span>›</span>
+    <strong>{{ product.name }}</strong>
+    <span>›</span>
+    <strong>Domains</strong>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Domains</h1>
+<p>Manage domains for <strong>{{ product.name }}</strong></p>
+
+<p><a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn">+ New Domain</a></p>
+
+{% if domains %}
+    {% for domain in domains %}
+    <div class="card">
+        <h3><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></h3>
+        <p>{{ domain.description|default:"No description" }}</p>
+        <div class="card-actions">
+            <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">View SubDomains</a>
+            <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}">Edit</a>
+            <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>No domains yet. Create your first domain to organize requirements.</p>
+    </div>
+{% endif %}
+{% endblock %}
