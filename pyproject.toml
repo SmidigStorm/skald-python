@@ -6,3 +6,9 @@ requires-python = ">=3.12"
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "skald_project.settings"
+python_files = ["test_*.py", "*_test.py"]
+testpaths = ["tests"]
+bdd_features_base_dir = "docs/domains/"
