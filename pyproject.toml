@@ -12,3 +12,30 @@ DJANGO_SETTINGS_MODULE = "skald_project.settings"
 python_files = ["test_*.py", "*_test.py"]
 testpaths = ["tests"]
 bdd_features_base_dir = "docs/domains/"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+exclude = [
+    ".venv",
+    "venv",
+    "__pycache__",
+    "migrations",
+    ".git",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "DJ",     # flake8-django
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
