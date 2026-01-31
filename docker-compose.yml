@@ -5,9 +5,9 @@ x-db-credentials: &db-credentials
 
 services:
   db:
-    image: postgres:16
+    image: postgres:18
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     environment:
       POSTGRES_DB: skald
       POSTGRES_USER: postgres
