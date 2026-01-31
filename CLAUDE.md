@@ -4,12 +4,47 @@ Skald is an AI-native product development platform. It guides teams through a be
 
 ## Tech Stack
 
-- **Django 5.x** + Django REST Framework
-- **PostgreSQL** database
-- **Docker** (Kubernetes deployment target)
+- **Django 6.x** + Django REST Framework
+- **PostgreSQL 18** database
+- **Docker** (Postgres only for dev, Kubernetes for prod)
 - **pytest-bdd** for BDD testing
 
 See `docs/strategy/tech-stack.md` for details.
+
+## Local Development
+
+### Docker Strategy
+
+Docker is used **only for PostgreSQL** in development. Django runs locally in a venv.
+
+```bash
+docker-compose up -d    # Start Postgres
+source .venv/bin/activate
+python manage.py runserver
+```
+
+### Naming Conventions
+
+| Resource | Name | Notes |
+|----------|------|-------|
+| Docker Compose service | `db` | Postgres service |
+| Container name | `skald-python-db-1` | Auto-generated |
+| Database name | `skald` | Dev database |
+| Database user | `postgres` | Default user |
+| Database password | `postgres` | Dev only |
+| Port | `5432` | Default Postgres port |
+
+### Environment Variables
+
+Configured in `.env` (copy from `.env.example`):
+
+```
+DB_NAME=skald
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=localhost
+DB_PORT=5432
+```
 
 ## Project Structure
 
