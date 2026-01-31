@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         # Create users
         self.stdout.write("Creating users...")
-        admin = self._create_user("admin", is_superuser=True, is_staff=True)
+        self._create_user("admin", is_superuser=True, is_staff=True)
         alice = self._create_user("alice", is_staff=True)
         bob = self._create_user("bob", is_staff=True)
         charlie = self._create_user("charlie", is_staff=True)

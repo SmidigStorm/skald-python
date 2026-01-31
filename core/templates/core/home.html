@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Skald{% endblock %}
+
+{% block body_max_width %}600px{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Welcome, {{ user.username }}</h1>
+    <a href="{% url 'users:logout' %}">Log out</a>
+</div>
+
+<h2>Your Products</h2>
+
+{% if memberships %}
+<div class="product-list">
+    {% for membership in memberships %}
+    <div class="product-item">
+        <a href="{% url 'knowledge:domain_list' product_id=membership.product.pk %}">
+            {{ membership.product.name }}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state card">
+    You are not assigned to any products
+</div>
+{% endif %}
+{% endblock %}

@@ -1,15 +1,50 @@
 """E2E tests for authorization feature."""
 
+from django.http import HttpResponse
 from django.test import Client
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from users.models import Product, ProductMembership
+from users.models import Product, ProductMembership, User
 
 scenarios("user-access/requirements/authorization.feature")
 
 # Note: Common steps (logged_in_as_admin, logged_in_as_product_manager,
 # logged_in_as_contributor, logged_in_as_viewer, logged_in_as_user,
 # product_exists) are in conftest.py
+
+
+@given("I am not a staff user")
+def not_a_staff_user(client: Client, db) -> None:
+    """Ensure the current user is not a staff user."""
+    # The manager user created by logged_in_as_product_manager is staff by default
+    # We need to update them to not be staff
+    user = User.objects.get(username="manager")
+    user.is_staff = False
+    user.save()
+
+
+@when("I visit the Django admin page", target_fixture="admin_response")
+def visit_django_admin(client: Client) -> HttpResponse:
+    """Visit the Django admin page."""
+    return client.get("/admin/", follow=True)
+
+
+@then("I see the Django admin interface")
+def see_admin_interface(admin_response: HttpResponse) -> None:
+    """Verify the Django admin interface is displayed."""
+    assert admin_response.status_code == 200
+    content = admin_response.content.decode()
+    assert "Site administration" in content or "Django administration" in content
+
+
+@then("I am redirected to the Django admin login page")
+def redirected_to_admin_login(admin_response: HttpResponse) -> None:
+    """Verify redirected to Django admin login page."""
+    assert admin_response.status_code == 200
+    content = admin_response.content.decode()
+    # Django admin login page has these elements
+    assert "username" in content.lower()
+    assert "password" in content.lower()
 
 
 @given(parsers.parse('I am not assigned to "{product_name}"'))

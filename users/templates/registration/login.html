@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Skald{% endblock %}
+
+{% block body_max_width %}400px{% endblock %}
+{% block body_margin %}100px auto{% endblock %}
+
+{% block extra_styles %}
+.login-title { text-align: center; margin-bottom: 30px; }
+.login-form { background: #fff; padding: 30px; border-radius: 4px; border: 1px solid #ddd; }
+.login-btn { display: block; width: 100%; padding: 12px; font-size: 16px; }
+{% endblock %}
+
+{% block content %}
+<h1 class="login-title">Skald</h1>
+
+{% if form.errors %}
+<div class="message error">Login failed</div>
+{% endif %}
+
+<form method="post" class="login-form">
+    {% csrf_token %}
+
+    <label for="id_username">Username</label>
+    <input type="text" name="username" id="id_username" autofocus required>
+
+    <label for="id_password">Password</label>
+    <input type="password" name="password" id="id_password" required>
+
+    <button type="submit" class="btn login-btn">Log in</button>
+</form>
+{% endblock %}
