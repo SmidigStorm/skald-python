@@ -17,6 +17,7 @@
 {% block content %}
 <h1>SubDomains</h1>
 <p>Manage subdomains for <strong>{{ domain.name }}</strong></p>
+{% if domain.description %}<p class="description">{{ domain.description }}</p>{% endif %}
 
 <p><a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn">+ New SubDomain</a></p>
 

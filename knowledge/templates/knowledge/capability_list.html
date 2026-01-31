@@ -19,6 +19,7 @@
 {% block content %}
 <h1>Capabilities</h1>
 <p>Manage capabilities for <strong>{{ subdomain.name }}</strong></p>
+{% if subdomain.description %}<p class="description">{{ subdomain.description }}</p>{% endif %}
 
 <p><a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn">+ New Capability</a></p>
 
