@@ -93,13 +93,6 @@ class SubDomainListView(ProductAccessMixin, ListView):
     template_name = "knowledge/subdomain_list.html"
     context_object_name = "subdomains"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        return response
-
     def get_queryset(self):
         domain_id = self.kwargs.get("domain_id")
         return SubDomain.objects.filter(domain_id=domain_id, domain__product=self.product)
@@ -119,20 +112,20 @@ class SubDomainCreateView(ProductEditMixin, CreateView):
     template_name = "knowledge/subdomain_form.html"
     fields = ["name", "description"]
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
+        context["domain"] = self.get_domain()
         return context
 
     def form_valid(self, form):
-        form.instance.domain = self.domain
+        form.instance.domain = self.get_domain()
         try:
             return super().form_valid(form)
         except IntegrityError:
@@ -143,7 +136,7 @@ class SubDomainCreateView(ProductEditMixin, CreateView):
         messages.success(self.request, f'SubDomain "{self.object.name}" created.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.domain.pk},
+            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
         )
 
 
@@ -155,19 +148,19 @@ class SubDomainUpdateView(ProductEditMixin, UpdateView):
     fields = ["name", "description"]
     pk_url_kwarg = "subdomain_id"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
 
     def get_queryset(self):
         return SubDomain.objects.filter(domain__product=self.product)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
+        context["domain"] = self.get_domain()
         return context
 
     def form_valid(self, form):
@@ -181,7 +174,7 @@ class SubDomainUpdateView(ProductEditMixin, UpdateView):
         messages.success(self.request, f'SubDomain "{self.object.name}" updated.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.domain.pk},
+            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
         )
 
 
@@ -192,26 +185,26 @@ class SubDomainDeleteView(ProductEditMixin, DeleteView):
     template_name = "knowledge/subdomain_confirm_delete.html"
     pk_url_kwarg = "subdomain_id"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
 
     def get_queryset(self):
         return SubDomain.objects.filter(domain__product=self.product)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
+        context["domain"] = self.get_domain()
         return context
 
     def get_success_url(self):
         messages.success(self.request, f'SubDomain "{self.object.name}" deleted.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.domain.pk},
+            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
         )
 
 
@@ -227,16 +220,6 @@ class CapabilityListView(ProductAccessMixin, ListView):
     template_name = "knowledge/capability_list.html"
     context_object_name = "capabilities"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        self.subdomain = get_object_or_404(
-            SubDomain, pk=kwargs.get("subdomain_id"), domain=self.domain
-        )
-        return response
-
     def get_queryset(self):
         subdomain_id = self.kwargs.get("subdomain_id")
         return Capability.objects.filter(
@@ -245,8 +228,14 @@ class CapabilityListView(ProductAccessMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
-        context["subdomain"] = self.subdomain
+        domain = get_object_or_404(
+            Domain, pk=self.kwargs.get("domain_id"), product=self.product
+        )
+        subdomain = get_object_or_404(
+            SubDomain, pk=self.kwargs.get("subdomain_id"), domain=domain
+        )
+        context["domain"] = domain
+        context["subdomain"] = subdomain
         return context
 
 
@@ -257,24 +246,28 @@ class CapabilityCreateView(ProductEditMixin, CreateView):
     template_name = "knowledge/capability_form.html"
     fields = ["name", "description"]
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        self.subdomain = get_object_or_404(
-            SubDomain, pk=kwargs.get("subdomain_id"), domain=self.domain
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
+
+    def get_subdomain(self):
+        if not hasattr(self, "_subdomain"):
+            self._subdomain = get_object_or_404(
+                SubDomain, pk=self.kwargs.get("subdomain_id"), domain=self.get_domain()
+            )
+        return self._subdomain
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
-        context["subdomain"] = self.subdomain
+        context["domain"] = self.get_domain()
+        context["subdomain"] = self.get_subdomain()
         return context
 
     def form_valid(self, form):
-        form.instance.subdomain = self.subdomain
+        form.instance.subdomain = self.get_subdomain()
         try:
             return super().form_valid(form)
         except IntegrityError:
@@ -287,8 +280,8 @@ class CapabilityCreateView(ProductEditMixin, CreateView):
             "knowledge:capability_list",
             kwargs={
                 "product_id": self.product.pk,
-                "domain_id": self.domain.pk,
-                "subdomain_id": self.subdomain.pk,
+                "domain_id": self.get_domain().pk,
+                "subdomain_id": self.get_subdomain().pk,
             },
         )
 
@@ -301,23 +294,27 @@ class CapabilityUpdateView(ProductEditMixin, UpdateView):
     fields = ["name", "description"]
     pk_url_kwarg = "capability_id"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        self.subdomain = get_object_or_404(
-            SubDomain, pk=kwargs.get("subdomain_id"), domain=self.domain
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
+
+    def get_subdomain(self):
+        if not hasattr(self, "_subdomain"):
+            self._subdomain = get_object_or_404(
+                SubDomain, pk=self.kwargs.get("subdomain_id"), domain=self.get_domain()
+            )
+        return self._subdomain
 
     def get_queryset(self):
         return Capability.objects.filter(subdomain__domain__product=self.product)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
-        context["subdomain"] = self.subdomain
+        context["domain"] = self.get_domain()
+        context["subdomain"] = self.get_subdomain()
         return context
 
     def form_valid(self, form):
@@ -333,8 +330,8 @@ class CapabilityUpdateView(ProductEditMixin, UpdateView):
             "knowledge:capability_list",
             kwargs={
                 "product_id": self.product.pk,
-                "domain_id": self.domain.pk,
-                "subdomain_id": self.subdomain.pk,
+                "domain_id": self.get_domain().pk,
+                "subdomain_id": self.get_subdomain().pk,
             },
         )
 
@@ -346,23 +343,27 @@ class CapabilityDeleteView(ProductEditMixin, DeleteView):
     template_name = "knowledge/capability_confirm_delete.html"
     pk_url_kwarg = "capability_id"
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-        self.domain = get_object_or_404(
-            Domain, pk=kwargs.get("domain_id"), product=self.product
-        )
-        self.subdomain = get_object_or_404(
-            SubDomain, pk=kwargs.get("subdomain_id"), domain=self.domain
-        )
-        return response
+    def get_domain(self):
+        if not hasattr(self, "_domain"):
+            self._domain = get_object_or_404(
+                Domain, pk=self.kwargs.get("domain_id"), product=self.product
+            )
+        return self._domain
+
+    def get_subdomain(self):
+        if not hasattr(self, "_subdomain"):
+            self._subdomain = get_object_or_404(
+                SubDomain, pk=self.kwargs.get("subdomain_id"), domain=self.get_domain()
+            )
+        return self._subdomain
 
     def get_queryset(self):
         return Capability.objects.filter(subdomain__domain__product=self.product)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = self.domain
-        context["subdomain"] = self.subdomain
+        context["domain"] = self.get_domain()
+        context["subdomain"] = self.get_subdomain()
         return context
 
     def get_success_url(self):
@@ -371,7 +372,7 @@ class CapabilityDeleteView(ProductEditMixin, DeleteView):
             "knowledge:capability_list",
             kwargs={
                 "product_id": self.product.pk,
-                "domain_id": self.domain.pk,
-                "subdomain_id": self.subdomain.pk,
+                "domain_id": self.get_domain().pk,
+                "subdomain_id": self.get_subdomain().pk,
             },
         )
