@@ -14,6 +14,7 @@ What the system can do. Capabilities are verb-like and describe actions or behav
 | Relationship | Target | Cardinality | Description |
 |--------------|--------|-------------|-------------|
 | belongs to | SubDomain | N:1 | A capability belongs to one sub-domain |
+| contains | [Requirement](../../requirements/entities/requirement.md) | 1:N | A capability has requirements that define it |
 
 ## Examples
 

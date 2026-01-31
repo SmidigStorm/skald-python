@@ -13,6 +13,7 @@ erDiagram
     SubDomain ||--o{ GlossaryTerm : contains
     Entity ||--o{ Relationship : "relates via"
     GlossaryTerm }o--o{ Entity : "relates to"
+    Capability ||--o{ Requirement : contains
 ```
 
 ## Hierarchy
