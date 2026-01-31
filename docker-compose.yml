@@ -1,13 +1,10 @@
-x-db-credentials: &db-credentials
-  DB_NAME: skald
-  DB_USER: postgres
-  DB_PASSWORD: postgres
-
 services:
   db:
     image: postgres:18
+    ports:
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: skald
       POSTGRES_USER: postgres
@@ -17,23 +14,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    environment:
-      DEBUG: "True"
-      SECRET_KEY: "docker-dev-secret-key-change-in-prod"
-      ALLOWED_HOSTS: "localhost,127.0.0.1"
-      <<: *db-credentials
-      DB_HOST: db
-      DB_PORT: 5432
-    depends_on:
-      db:
-        condition: service_healthy
 
 volumes:
   postgres_data:
