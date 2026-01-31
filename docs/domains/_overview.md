@@ -9,11 +9,11 @@ Skald is an AI-native product development platform. This document provides an ov
 | [Domain Knowledge](domain-knowledge/entities/_overview.md) | Entities, relationships, ubiquitous language, documentation | ✓ Documented |
 | [Requirements](requirements/entities/_overview.md) | BDD features, scenarios, executable specs | ✓ Documented |
 | [User Access](user-access/entities/_overview.md) | Multi-tenancy, users, products, roles | ✓ Documented |
-| [Insights](insights/entities/_overview.md) | User research, Atomic UX observations | Pending |
+| [Insights](insights/entities/_overview.md) | Atomic UX Research: Experiments, Facts, Insights, Recommendations | ✓ Documented |
 | [Strategy](strategy/entities/_overview.md) | Strategic pillars, OKRs, time horizons | ✓ Documented |
 | [Planning](planning/entities/_overview.md) | Releases, Backlog Items, Sprints, Teams | ✓ Documented |
 | [Architecture](architecture/entities/_overview.md) | ADRs, tech stack, system design decisions | Pending |
-| [Testing](testing/entities/_overview.md) | E2E tests tied to specifications | Pending |
+| [Testing](testing/entities/_overview.md) | Acceptance tests tied to Examples | ✓ Documented (TBD details) |
 
 ## Cross-Domain Relationships
 
@@ -23,6 +23,7 @@ erDiagram
     Domain ||--o{ SubDomain : "has"
     SubDomain ||--o{ Capability : "has"
     Capability ||--o{ Requirement : "has"
+    Requirement ||--o{ Example : "has"
     Requirement }o--o{ BacklogItem : "implemented by"
     BacklogItem }o--o| Team : "owned by"
     BacklogItem }o--o| Sprint : "planned into"
@@ -32,7 +33,14 @@ erDiagram
     Product ||--o{ TimeHorizon : "has"
     TimeHorizon ||--o{ Objective : "contains"
     Objective ||--o{ KeyResult : "has"
-    Example ||--o{ TestCase : "automated as"
+    Example ||--|| Test : "automated as"
+    Test ||--o{ TestResult : "has"
+    Product ||--o{ Experiment : "has"
+    Experiment ||--o{ Fact : "produces"
+    Fact }o--o{ Insight : "contributes to"
+    Insight }o--o{ Recommendation : "leads to"
+    Recommendation }o--o| BacklogItem : "becomes"
+    Recommendation }o--o| Requirement : "becomes"
     Product ||--o{ User : "has members"
     Product ||--o{ Team : "has"
 ```
@@ -58,7 +66,9 @@ Some entities are shared across domains:
 |--------|---------------|--------------|
 | Product | User Access | Domain Knowledge, Planning, Strategy (tenant boundary) |
 | Capability | Domain Knowledge | Requirements (contains requirements) |
-| Example | Requirements | Testing (executed as tests) |
-| BacklogItem | Planning | Requirements (implements), Strategy (contributes to objectives) |
+| Example | Requirements | Testing (1:1 with Test) |
+| Test | Testing | Requirements (automates Example) |
+| BacklogItem | Planning | Requirements (implements), Strategy (contributes to), Insights (from recommendations) |
+| Recommendation | Insights | Planning (becomes BacklogItem), Requirements (becomes Requirement) |
 | Team | Planning | - |
 | Objective | Strategy | Planning (backlog items contribute to) |
