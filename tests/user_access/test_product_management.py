@@ -1,46 +1,33 @@
 """E2E tests for product management feature."""
 
-import pytest
+from typing import Any
+
+from django.http import HttpResponse
+from django.test import Client
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from users.models import Product, User
+from users.models import Product
 
 scenarios("user-access/requirements/product-management.feature")
 
-
-@pytest.fixture
-def admin_user(db):
-    """Create a system administrator user."""
-    User.objects.filter(username="admin").delete()
-    return User.objects.create_superuser(
-        username="admin", password="adminpass", email="admin@example.com"
-    )
-
-
-@given("I am logged in as a system administrator")
-def logged_in_as_admin(client, admin_user):
-    """Log in as the admin user."""
-    client.login(username="admin", password="adminpass")
-
-
-@given(parsers.parse('the product "{product_name}" exists'))
-def product_exists(db, product_name):
-    """Ensure the product exists."""
-    Product.objects.filter(name=product_name).delete()
-    Product.objects.create(name=product_name, is_active=True)
+# Note: "I am logged in as a system administrator" and "the product exists" steps are in conftest.py
 
 
 @given(parsers.parse('the product "{product_name}" is inactive'))
-def product_is_inactive(db, product_name):
+def product_is_inactive(db: Any, product_name: str) -> Product:
     """Ensure the product exists and is inactive."""
-    Product.objects.filter(name=product_name).delete()
-    Product.objects.create(name=product_name, is_active=False)
+    product, _ = Product.objects.get_or_create(
+        name=product_name, defaults={"is_active": False}
+    )
+    if product.is_active:
+        product.is_active = False
+        product.save()
+    return product
 
 
 @when("I create a product with:", target_fixture="created_product")
-def create_product_with_table(client, datatable):
+def create_product_with_table(client: Client, datatable: list[list[str]]) -> HttpResponse:
     """Create a product via Django admin."""
-    # datatable is a list of dicts from pytest-bdd
     data = {row[0]: row[1] for row in datatable}
 
     response = client.post(
@@ -57,7 +44,7 @@ def create_product_with_table(client, datatable):
 
 
 @when(parsers.parse('I deactivate the product "{product_name}"'))
-def deactivate_product(client, product_name):
+def deactivate_product(client: Client, product_name: str) -> None:
     """Deactivate a product via Django admin."""
     product = Product.objects.get(name=product_name)
     client.post(
@@ -73,7 +60,7 @@ def deactivate_product(client, product_name):
 
 
 @when(parsers.parse('I reactivate the product "{product_name}"'))
-def reactivate_product(client, product_name):
+def reactivate_product(client: Client, product_name: str) -> None:
     """Reactivate a product via Django admin."""
     product = Product.objects.get(name=product_name)
     client.post(
@@ -89,36 +76,42 @@ def reactivate_product(client, product_name):
 
 
 @then(parsers.parse('the product "{product_name}" exists in the system'))
-def product_exists_in_system(product_name):
+def product_exists_in_system(product_name: str) -> None:
     """Verify the product exists."""
     assert Product.objects.filter(name=product_name).exists()
 
 
 @then(parsers.parse('the product "{product_name}" is marked as inactive'))
-def product_is_marked_inactive(product_name):
+def product_is_marked_inactive(product_name: str) -> None:
     """Verify the product is inactive."""
     product = Product.objects.get(name=product_name)
     assert product.is_active is False
 
 
 @then(parsers.parse('the product "{product_name}" is marked as active'))
-def product_is_marked_active(product_name):
+def product_is_marked_active(product_name: str) -> None:
     """Verify the product is active."""
     product = Product.objects.get(name=product_name)
     assert product.is_active is True
 
 
 @then(parsers.parse('users can no longer access the product "{product_name}"'))
-def users_cannot_access_product(product_name):
-    """Verify users cannot access inactive product (placeholder for future access logic)."""
+def users_cannot_access_product(product_name: str) -> None:
+    """Verify users cannot access inactive product.
+
+    Note: Full access control will be implemented with product-scoped views.
+    Currently verifies the is_active flag which gates access.
+    """
     product = Product.objects.get(name=product_name)
-    # Currently we just check the flag; actual access control will be implemented later
     assert product.is_active is False
 
 
 @then(parsers.parse('users can access the product "{product_name}" again'))
-def users_can_access_product(product_name):
-    """Verify users can access active product (placeholder for future access logic)."""
+def users_can_access_product(product_name: str) -> None:
+    """Verify users can access active product.
+
+    Note: Full access control will be implemented with product-scoped views.
+    Currently verifies the is_active flag which gates access.
+    """
     product = Product.objects.get(name=product_name)
-    # Currently we just check the flag; actual access control will be implemented later
     assert product.is_active is True
