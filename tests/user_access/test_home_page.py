@@ -16,9 +16,10 @@ def assigned_to_product_as_manager(db: Any, product_name: str, client: Client) -
     """Assign the logged-in user to a product as manager."""
     product, _ = Product.objects.get_or_create(name=product_name, defaults={"is_active": True})
     # Get the logged-in user from the session
-    user = User.objects.get(username=client.session.get("_auth_user_id") and User.objects.get(
-        pk=client.session.get("_auth_user_id")
-    ).username or "alice")
+    user_id = client.session.get("_auth_user_id")
+    if not user_id:
+        raise ValueError("No user is logged in - ensure a login step runs before this step")
+    user = User.objects.get(pk=user_id)
     ProductMembership.objects.get_or_create(
         user=user,
         product=product,
