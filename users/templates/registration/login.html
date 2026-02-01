@@ -1,32 +1,53 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Login - Skald{% endblock %}
 
-{% block body_max_width %}400px{% endblock %}
-{% block body_margin %}100px auto{% endblock %}
+{% block sidebar %}{% endblock %}
 
-{% block extra_styles %}
-.login-title { text-align: center; margin-bottom: 30px; }
-.login-form { background: #fff; padding: 30px; border-radius: 4px; border: 1px solid #ddd; }
-.login-btn { display: block; width: 100%; padding: 12px; font-size: 16px; }
+{% block header_end %}
+{% include "components/theme_switcher.html" %}
 {% endblock %}
 
 {% block content %}
-<h1 class="login-title">Skald</h1>
+<div class="flex items-center justify-center min-h-[calc(100vh-8rem)]">
+    <div class="card bg-base-100 shadow-xl w-full max-w-md">
+        <div class="card-body">
+            <h1 class="card-title text-2xl font-bold justify-center mb-4">Skald</h1>
 
-{% if form.errors %}
-<div class="message error">Login failed</div>
-{% endif %}
+            {% if form.errors %}
+            <div class="alert alert-error mb-4">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Login failed</span>
+            </div>
+            {% endif %}
 
-<form method="post" class="login-form">
-    {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-    <label for="id_username">Username</label>
-    <input type="text" name="username" id="id_username" autofocus required>
+                <div class="form-control mb-4">
+                    <label class="label" for="id_username">
+                        <span class="label-text">Username</span>
+                    </label>
+                    <input type="text" name="username" id="id_username"
+                           class="input input-bordered w-full" autofocus required>
+                </div>
 
-    <label for="id_password">Password</label>
-    <input type="password" name="password" id="id_password" required>
+                <div class="form-control mb-6">
+                    <label class="label" for="id_password">
+                        <span class="label-text">Password</span>
+                    </label>
+                    <input type="password" name="password" id="id_password"
+                           class="input input-bordered w-full" required>
+                </div>
 
-    <button type="submit" class="btn login-btn">Log in</button>
-</form>
+                <div class="form-control">
+                    <button type="submit" class="btn btn-primary w-full">
+                        <i class="fa-solid fa-sign-in-alt"></i> Log in
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

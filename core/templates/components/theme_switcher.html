@@ -1,0 +1,30 @@
+<div class="dropdown dropdown-end">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Change Theme">
+        <i class="fa-solid fa-palette"></i>
+    </div>
+    <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-20 w-40 p-2 shadow-2xl mt-2">
+        <li class="menu-title text-xs">Theme</li>
+        <li>
+            <button data-set-theme="light" class="gap-2">
+                <i class="fa-solid fa-sun"></i> Light
+            </button>
+        </li>
+        <li>
+            <button data-set-theme="dark" class="gap-2">
+                <i class="fa-solid fa-moon"></i> Dark
+            </button>
+        </li>
+    </ul>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-set-theme]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var theme = this.getAttribute('data-set-theme');
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    });
+});
+</script>

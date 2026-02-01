@@ -1,121 +1,143 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+    <script>
+        /* Set theme before page load to avoid flash */
+        function getSystemColorScheme() {
+            try {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                return 'light';
+            } catch (e) {
+                return 'light';
+            }
+        }
+        document.documentElement.setAttribute(
+            'data-theme',
+            localStorage.getItem('theme') || getSystemColorScheme()
+        );
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Skald{% endblock %}</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: {% block body_max_width %}900px{% endblock %};
-            margin: {% block body_margin %}0 auto{% endblock %};
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        h1, h2, h3 { color: #333; }
-        a { color: #0066cc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .breadcrumb {
-            background: #fff;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        .breadcrumb a { margin-right: 5px; }
-        .breadcrumb span { color: #666; margin: 0 5px; }
-        .card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        .card h3 { margin-top: 0; }
-        .card p { color: #666; margin-bottom: 10px; }
-        .card-actions { margin-top: 15px; }
-        .card-actions a { margin-right: 10px; }
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background: #0066cc;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn:hover { background: #0052a3; text-decoration: none; }
-        .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-secondary { background: #6c757d; }
-        .btn-secondary:hover { background: #5a6268; }
-        form.styled { background: #fff; padding: 20px; border-radius: 4px; border: 1px solid #ddd; }
-        label { display: block; margin-bottom: 5px; font-weight: 500; }
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        textarea { min-height: 100px; resize: vertical; }
-        .form-actions { margin-top: 20px; }
-        .messages { margin-bottom: 20px; }
-        .message {
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .empty-state { text-align: center; padding: 40px; color: #666; }
-        .errorlist { color: #dc3545; list-style: none; padding: 0; margin: 0 0 15px 0; }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header a { color: #666; }
-        .product-list {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .product-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .product-item:last-child { border-bottom: none; }
-        .product-item:hover { background: #f9f9f9; }
-        .btn-link {
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: inherit;
-            padding: 0;
-        }
-        .btn-link:hover { text-decoration: underline; }
-        {% block extra_styles %}{% endblock %}
-    </style>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="bg-base-200 min-h-screen">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        {% block sidebar %}
+        <aside class="w-64 bg-base-100 border-r border-base-200 flex flex-col max-lg:hidden">
+            {% block sidebar_content %}
+            <!-- Logo/Brand -->
+            <div class="p-4 border-b border-base-200">
+                <a href="{% url 'core:home' %}" class="text-xl font-bold">Skald</a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 p-4">
+                <ul class="menu">
+                    {% block sidebar_nav %}{% endblock %}
+                </ul>
+            </nav>
+
+            <!-- User info at bottom -->
+            {% if user.is_authenticated %}
+            <div class="p-4 border-t border-base-200">
+                <div class="flex items-center gap-2 text-sm text-base-content/70">
+                    <i class="fa-regular fa-user"></i>
+                    <span>{{ user.username }}</span>
+                </div>
+            </div>
+            {% endif %}
+            {% endblock %}
+        </aside>
+        {% endblock %}
+
+        <!-- Main content area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Top navbar -->
+            <header class="navbar bg-base-100 border-b border-base-200 px-4">
+                <div class="navbar-start">
+                    <!-- Mobile menu button -->
+                    <label for="sidebar-drawer" class="btn btn-ghost btn-circle lg:hidden">
+                        <i class="fa-solid fa-bars"></i>
+                    </label>
+                    {% block header_start %}{% endblock %}
+                </div>
+                <div class="navbar-center">
+                    {% block header_center %}{% endblock %}
+                </div>
+                <div class="navbar-end gap-2">
+                    {% block header_end %}
+                    {% include "components/theme_switcher.html" %}
+                    {% if user.is_authenticated %}
+                    <div class="dropdown dropdown-end">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-20 w-48 p-2 shadow-2xl mt-2">
+                            <li class="menu-title text-xs">{{ user.username }}</li>
+                            <li>
+                                <form method="post" action="{% url 'users:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full text-left">
+                                        <i class="fa-solid fa-sign-out-alt"></i> Log out
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endblock %}
+                </div>
+            </header>
+
+            <!-- Main content -->
+            <main class="flex-1 p-6">
+                {% block breadcrumb %}{% endblock %}
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile sidebar drawer -->
+    <div class="drawer lg:hidden">
+        <input id="sidebar-drawer" type="checkbox" class="drawer-toggle">
+        <div class="drawer-side z-50">
+            <label for="sidebar-drawer" class="drawer-overlay"></label>
+            <aside class="w-64 min-h-screen bg-base-100">
+                {% block mobile_sidebar %}
+                <div class="p-4 border-b border-base-200">
+                    <a href="{% url 'core:home' %}" class="text-xl font-bold">Skald</a>
+                </div>
+                <nav class="p-4">
+                    <ul class="menu">
+                        {% block mobile_sidebar_nav %}{% endblock %}
+                    </ul>
+                </nav>
+                {% endblock %}
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast messages -->
     {% if messages %}
-    <div class="messages">
+    <div class="toast toast-top toast-end z-50">
         {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
+        <div class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} shadow-lg">
+            <span>{{ message }}</span>
+            <button class="btn btn-xs btn-circle btn-ghost" onclick="this.parentElement.remove();">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    {% block breadcrumb %}{% endblock %}
-
-    {% block content %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,14 @@
+<li class="menu-title">{{ product.name }}</li>
+<li>
+    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="{% if active_nav == 'domains' %}active{% endif %}">
+        <i class="fa-solid fa-layer-group"></i>
+        Domains
+    </a>
+</li>
+{% block knowledge_nav_extra %}{% endblock %}
+<li class="mt-4">
+    <a href="{% url 'core:home' %}">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Products
+    </a>
+</li>

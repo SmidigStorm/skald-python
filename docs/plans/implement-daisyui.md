@@ -1,5 +1,7 @@
 # Implement UI with DaisyUI
 
+**Completed: 2026-02-01**
+
 ## Summary
 
 Set up Tailwind CSS + DaisyUI integration for the Skald application using a Node.js build pipeline (following django-daisy patterns). This establishes the foundation for a consistent, themeable design system with sidebar navigation.
@@ -228,20 +230,20 @@ STATICFILES_DIRS = [
 
 ## Acceptance Criteria
 
-- [ ] `npm run dev` watches and compiles CSS
-- [ ] `npm run build` produces minified CSS
-- [ ] Theme automatically matches system preference (light/dark)
-- [ ] User can manually switch theme via dropdown
-- [ ] Theme preference persists across page reloads (localStorage)
-- [ ] Login page displays with DaisyUI styling
-- [ ] Home page shows sidebar with navigation
-- [ ] Domain list page uses DaisyUI cards and buttons
-- [ ] All existing tests still pass
+- [x] `npm run dev` watches and compiles CSS
+- [x] `npm run build` produces minified CSS
+- [x] Theme automatically matches system preference (light/dark)
+- [x] User can manually switch theme via dropdown
+- [x] Theme preference persists across page reloads (localStorage)
+- [x] Login page displays with DaisyUI styling
+- [x] Home page shows sidebar with navigation
+- [x] Domain list page uses DaisyUI cards and buttons
+- [x] All existing tests still pass (54/54)
 
-## Open Questions
+## Open Questions (Resolved)
 
-- Should we add `django-widget-tweaks` for easier form field styling?
-- Do we want to add FontAwesome icons (like django-daisy) or keep iconless for now?
+- ~~Should we add `django-widget-tweaks` for easier form field styling?~~ **Yes, added**
+- ~~Do we want to add FontAwesome icons (like django-daisy) or keep iconless for now?~~ **Yes, added FontAwesome 6.5.1 via CDN**
 
 ## Decisions Made
 

@@ -1,0 +1,11 @@
+<li class="menu-title">Products</li>
+{% for membership in memberships %}
+<li>
+    <a href="{% url 'knowledge:domain_list' product_id=membership.product.pk %}">
+        <i class="fa-solid fa-box"></i>
+        {{ membership.product.name }}
+    </a>
+</li>
+{% empty %}
+<li class="text-base-content/60 text-sm px-4">No products</li>
+{% endfor %}

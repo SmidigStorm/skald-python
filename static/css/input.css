@@ -1,0 +1,51 @@
+@import "tailwindcss" source(none);
+@plugin "daisyui" {
+    themes: light --default, dark --prefersdark;
+}
+@source "../../**/templates/**/*.html";
+
+/* Ubuntu font family */
+@font-face {
+    font-family: 'body-font';
+    src: local('Ubuntu'), local('Ubuntu-Regular'), url("../fonts/Ubuntu/Ubuntu-Regular.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'body-font';
+    src: local('Ubuntu-Medium'), url("../fonts/Ubuntu/Ubuntu-Medium.ttf") format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'body-font';
+    src: local('Ubuntu-Bold'), url("../fonts/Ubuntu/Ubuntu-Bold.ttf") format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Apply Ubuntu font globally */
+body {
+    font-family: 'body-font', system-ui, sans-serif;
+}
+
+/* Form error styling */
+.errorlist {
+    @apply label px-0;
+}
+
+.errorlist li {
+    @apply label text-error font-bold text-sm;
+}
+
+/* Card styling */
+.card {
+    @apply rounded-md shadow-sm;
+}
+
+/* Input styling */
+.input, .select, .checkbox, .radio {
+    @apply focus:outline-0 transition-all focus:outline-offset-0 rounded-md;
+}

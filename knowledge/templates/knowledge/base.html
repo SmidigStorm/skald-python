@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
-{% block breadcrumb %}{% endblock %}
+{% block sidebar_nav %}
+{% include "knowledge/components/knowledge_nav.html" %}
+{% endblock %}
 
-{% block content %}{% endblock %}
+{% block mobile_sidebar_nav %}
+{% include "knowledge/components/knowledge_nav.html" %}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumbs text-sm mb-4">
+    <ul>
+        <li><a href="{% url 'core:home' %}"><i class="fa-solid fa-home"></i> Products</a></li>
+        {% block breadcrumb_items %}{% endblock %}
+    </ul>
+</div>
+{% endblock %}

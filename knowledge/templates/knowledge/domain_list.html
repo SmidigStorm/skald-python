@@ -2,37 +2,59 @@
 
 {% block title %}Domains - {{ product.name }}{% endblock %}
 
-{% block breadcrumb %}
-<div class="breadcrumb">
-    <a href="{% url 'core:home' %}">Products</a>
-    <span>›</span>
-    <strong>{{ product.name }}</strong>
-    <span>›</span>
-    <strong>Domains</strong>
-</div>
+{% block breadcrumb_items %}
+<li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
+<li>Domains</li>
 {% endblock %}
 
 {% block content %}
-<h1>Domains</h1>
-<p>Manage domains for <strong>{{ product.name }}</strong></p>
-
-<p><a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn">+ New Domain</a></p>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold">Domains</h1>
+        <p class="text-base-content/70">Manage domains for <strong>{{ product.name }}</strong></p>
+    </div>
+    <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> New Domain
+    </a>
+</div>
 
 {% if domains %}
+<div class="grid gap-4">
     {% for domain in domains %}
-    <div class="card">
-        <h3><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></h3>
-        <p>{{ domain.description|default:"No description" }}</p>
-        <div class="card-actions">
-            <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">View SubDomains</a>
-            <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}">Edit</a>
-            <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}">Delete</a>
+    <div class="card bg-base-100 shadow">
+        <div class="card-body">
+            <h3 class="card-title">
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="hover:text-primary">
+                    {{ domain.name }}
+                </a>
+            </h3>
+            <p class="text-base-content/70">{{ domain.description|default:"No description" }}</p>
+            <div class="card-actions justify-end">
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm">
+                    <i class="fa-solid fa-folder-open"></i> SubDomains
+                </a>
+                <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm">
+                    <i class="fa-solid fa-pen"></i> Edit
+                </a>
+                <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm text-error">
+                    <i class="fa-solid fa-trash"></i> Delete
+                </a>
+            </div>
         </div>
     </div>
     {% endfor %}
+</div>
 {% else %}
-    <div class="empty-state">
-        <p>No domains yet. Create your first domain to organize requirements.</p>
+<div class="card bg-base-100 shadow">
+    <div class="card-body text-center py-12">
+        <i class="fa-solid fa-layer-group text-4xl text-base-content/30 mb-4"></i>
+        <p class="text-base-content/60">No domains yet. Create your first domain to organize requirements.</p>
+        <div class="mt-4">
+            <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Create Domain
+            </a>
+        </div>
     </div>
+</div>
 {% endif %}
 {% endblock %}
