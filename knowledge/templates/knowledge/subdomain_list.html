@@ -2,40 +2,65 @@
 
 {% block title %}SubDomains - {{ domain.name }} - {{ product.name }}{% endblock %}
 
-{% block breadcrumb %}
-<div class="breadcrumb">
-    <a href="{% url 'core:home' %}">Products</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
-    <span>›</span>
-    <strong>{{ domain.name }}</strong>
-    <span>›</span>
-    <strong>SubDomains</strong>
-</div>
+{% block sidebar_nav %}
+{% include "knowledge/components/domain_nav.html" %}
+{% endblock %}
+
+{% block mobile_sidebar_nav %}
+{% include "knowledge/components/domain_nav.html" %}
+{% endblock %}
+
+{% block breadcrumb_items %}
+<li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
+<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
+<li>SubDomains</li>
 {% endblock %}
 
 {% block content %}
-<h1>SubDomains</h1>
-<p>Manage subdomains for <strong>{{ domain.name }}</strong></p>
-{% if domain.description %}<p class="description">{{ domain.description }}</p>{% endif %}
-
-<p><a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn">+ New SubDomain</a></p>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold">SubDomains</h1>
+        <p class="text-base-content/70">Manage subdomains for <strong>{{ domain.name }}</strong></p>
+        {% if domain.description %}<p class="text-sm text-base-content/50 mt-1">{{ domain.description }}</p>{% endif %}
+    </div>
+    <a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> New SubDomain
+    </a>
+</div>
 
 {% if subdomains %}
-    {% for subdomain in subdomains %}
-    <div class="card">
-        <h3><a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">{{ subdomain.name }}</a></h3>
-        <p>{{ subdomain.description|default:"No description" }}</p>
-        <div class="card-actions">
-            <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">View Capabilities</a>
-            <a href="{% url 'knowledge:subdomain_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">Edit</a>
-            <a href="{% url 'knowledge:subdomain_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">Delete</a>
-        </div>
-    </div>
-    {% endfor %}
+<div class="bg-base-100 rounded-lg shadow">
+    <ul class="menu p-0">
+        {% for subdomain in subdomains %}
+        <li class="border-b border-base-200 last:border-b-0">
+            <div class="flex items-center justify-between py-3 px-4 hover:bg-base-200 rounded-none">
+                <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="flex-1 flex items-center gap-3">
+                    <i class="fa-solid fa-folder text-primary"></i>
+                    <div>
+                        <div class="font-medium">{{ subdomain.name }}</div>
+                        <div class="text-sm text-base-content/60">{{ subdomain.description|default:"No description"|truncatewords:12 }}</div>
+                    </div>
+                </a>
+                <div class="flex gap-1">
+                    <a href="{% url 'knowledge:subdomain_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="{% url 'knowledge:subdomain_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 {% else %}
-    <div class="empty-state">
-        <p>No subdomains yet. Create your first subdomain to further organize this domain.</p>
-    </div>
+<div class="bg-base-100 rounded-lg shadow p-8 text-center">
+    <i class="fa-solid fa-folder text-4xl text-base-content/30 mb-4"></i>
+    <p class="text-base-content/60 mb-4">No subdomains yet. Create your first subdomain to further organize this domain.</p>
+    <a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> Create SubDomain
+    </a>
+</div>
 {% endif %}
 {% endblock %}

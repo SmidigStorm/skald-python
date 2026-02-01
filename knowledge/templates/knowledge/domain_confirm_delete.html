@@ -2,36 +2,40 @@
 
 {% block title %}Delete {{ object.name }} - {{ product.name }}{% endblock %}
 
-{% block breadcrumb %}
-<div class="breadcrumb">
-    <a href="{% url 'core:home' %}">Products</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
-    <span>›</span>
-    <strong>Delete {{ object.name }}</strong>
-</div>
+{% block breadcrumb_items %}
+<li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
+<li>Delete {{ object.name }}</li>
 {% endblock %}
 
 {% block content %}
-<h1>Delete Domain</h1>
+<div class="max-w-2xl">
+    <h1 class="text-2xl font-bold mb-6">Delete Domain</h1>
 
-<form method="post">
-    {% csrf_token %}
+    <div class="bg-base-100 rounded-lg shadow p-6">
+        <form method="post">
+            {% csrf_token %}
 
-    <div class="card">
-        <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+            <div class="mb-6">
+                <p class="text-lg">Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
 
-        {% if object.subdomains.count %}
-        <p style="color: #dc3545;">
-            <strong>Warning:</strong> This will also delete {{ object.subdomains.count }} subdomain(s)
-            and all their capabilities.
-        </p>
-        {% endif %}
+                {% if object.subdomains.count %}
+                <div class="alert alert-warning mt-4">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>
+                        <strong>Warning:</strong> This will also delete {{ object.subdomains.count }} subdomain(s)
+                        and all their capabilities.
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex gap-2 justify-end">
+                <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-error">
+                    <i class="fa-solid fa-trash"></i> Delete Domain
+                </button>
+            </div>
+        </form>
     </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-danger">Delete Domain</button>
-        <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 {% endblock %}

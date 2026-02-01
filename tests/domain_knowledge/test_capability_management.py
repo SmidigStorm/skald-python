@@ -177,8 +177,12 @@ def see_error_message(create_response: HttpResponse, error_message: str) -> None
 @then(parsers.parse("I see {count:d} capabilities"))
 def see_capability_count(list_response: HttpResponse, count: int) -> None:
     """Verify number of capabilities displayed."""
+    import re
+
     content = list_response.content.decode()
-    assert content.count('class="card"') == count
+    # Count list items in the capability list (border-b pattern for list items)
+    list_item_count = len(re.findall(r'<li class="border-b border-base-200', content))
+    assert list_item_count == count
 
 
 @then(parsers.parse('I see the capability name "{capability_name}"'))

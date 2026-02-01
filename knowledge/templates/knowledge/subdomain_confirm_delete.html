@@ -2,37 +2,48 @@
 
 {% block title %}Delete {{ object.name }} - {{ domain.name }}{% endblock %}
 
-{% block breadcrumb %}
-<div class="breadcrumb">
-    <a href="{% url 'core:home' %}">Products</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a>
-    <span>›</span>
-    <strong>Delete {{ object.name }}</strong>
-</div>
+{% block sidebar_nav %}
+{% include "knowledge/components/domain_nav.html" %}
+{% endblock %}
+
+{% block mobile_sidebar_nav %}
+{% include "knowledge/components/domain_nav.html" %}
+{% endblock %}
+
+{% block breadcrumb_items %}
+<li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
+<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
+<li>Delete {{ object.name }}</li>
 {% endblock %}
 
 {% block content %}
-<h1>Delete SubDomain</h1>
+<div class="max-w-2xl">
+    <h1 class="text-2xl font-bold mb-6">Delete SubDomain</h1>
 
-<form method="post">
-    {% csrf_token %}
+    <div class="bg-base-100 rounded-lg shadow p-6">
+        <form method="post">
+            {% csrf_token %}
 
-    <div class="card">
-        <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+            <div class="mb-6">
+                <p class="text-lg">Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
 
-        {% if object.capabilities.count %}
-        <p style="color: #dc3545;">
-            <strong>Warning:</strong> This will also delete {{ object.capabilities.count }} capability(ies).
-        </p>
-        {% endif %}
+                {% if object.capabilities.count %}
+                <div class="alert alert-warning mt-4">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>
+                        <strong>Warning:</strong> This will also delete {{ object.capabilities.count }} capability(ies).
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex gap-2 justify-end">
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-error">
+                    <i class="fa-solid fa-trash"></i> Delete SubDomain
+                </button>
+            </div>
+        </form>
     </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-danger">Delete SubDomain</button>
-        <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 {% endblock %}

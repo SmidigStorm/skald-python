@@ -2,41 +2,66 @@
 
 {% block title %}Capabilities - {{ subdomain.name }} - {{ product.name }}{% endblock %}
 
-{% block breadcrumb %}
-<div class="breadcrumb">
-    <a href="{% url 'core:home' %}">Products</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a>
-    <span>›</span>
-    <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a>
-    <span>›</span>
-    <strong>{{ subdomain.name }}</strong>
-    <span>›</span>
-    <strong>Capabilities</strong>
-</div>
+{% block sidebar_nav %}
+{% include "knowledge/components/subdomain_nav.html" %}
+{% endblock %}
+
+{% block mobile_sidebar_nav %}
+{% include "knowledge/components/subdomain_nav.html" %}
+{% endblock %}
+
+{% block breadcrumb_items %}
+<li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
+<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
+<li><a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">{{ subdomain.name }}</a></li>
+<li>Capabilities</li>
 {% endblock %}
 
 {% block content %}
-<h1>Capabilities</h1>
-<p>Manage capabilities for <strong>{{ subdomain.name }}</strong></p>
-{% if subdomain.description %}<p class="description">{{ subdomain.description }}</p>{% endif %}
-
-<p><a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn">+ New Capability</a></p>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold">Capabilities</h1>
+        <p class="text-base-content/70">Manage capabilities for <strong>{{ subdomain.name }}</strong></p>
+        {% if subdomain.description %}<p class="text-sm text-base-content/50 mt-1">{{ subdomain.description }}</p>{% endif %}
+    </div>
+    <a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> New Capability
+    </a>
+</div>
 
 {% if capabilities %}
-    {% for capability in capabilities %}
-    <div class="card">
-        <h3>{{ capability.name }}</h3>
-        <p>{{ capability.description|default:"No description" }}</p>
-        <div class="card-actions">
-            <a href="{% url 'knowledge:capability_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}">Edit</a>
-            <a href="{% url 'knowledge:capability_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}">Delete</a>
-        </div>
-    </div>
-    {% endfor %}
+<div class="bg-base-100 rounded-lg shadow">
+    <ul class="menu p-0">
+        {% for capability in capabilities %}
+        <li class="border-b border-base-200 last:border-b-0">
+            <div class="flex items-center justify-between py-3 px-4 hover:bg-base-200 rounded-none">
+                <div class="flex-1 flex items-center gap-3">
+                    <i class="fa-solid fa-puzzle-piece text-primary"></i>
+                    <div>
+                        <div class="font-medium">{{ capability.name }}</div>
+                        <div class="text-sm text-base-content/60">{{ capability.description|default:"No description"|truncatewords:12 }}</div>
+                    </div>
+                </div>
+                <div class="flex gap-1">
+                    <a href="{% url 'knowledge:capability_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}" class="btn btn-ghost btn-xs" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="{% url 'knowledge:capability_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk capability_id=capability.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 {% else %}
-    <div class="empty-state">
-        <p>No capabilities yet. Create your first capability to define what the system can do.</p>
-    </div>
+<div class="bg-base-100 rounded-lg shadow p-8 text-center">
+    <i class="fa-solid fa-puzzle-piece text-4xl text-base-content/30 mb-4"></i>
+    <p class="text-base-content/60 mb-4">No capabilities yet. Create your first capability to define what the system can do.</p>
+    <a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> Create Capability
+    </a>
+</div>
 {% endif %}
 {% endblock %}

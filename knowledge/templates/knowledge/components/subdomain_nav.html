@@ -1,0 +1,17 @@
+<li class="menu-title">{{ domain.name }}</li>
+{% for sd in all_subdomains %}
+<li>
+    <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=sd.pk %}" class="{% if sd.pk == subdomain.pk %}active{% endif %}">
+        <i class="fa-solid fa-folder{% if sd.pk == subdomain.pk %}-open{% endif %}"></i>
+        {{ sd.name }}
+    </a>
+</li>
+{% empty %}
+<li class="text-base-content/60 text-sm px-4">No subdomains</li>
+{% endfor %}
+<li class="mt-4">
+    <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">
+        <i class="fa-solid fa-arrow-left"></i>
+        All SubDomains
+    </a>
+</li>

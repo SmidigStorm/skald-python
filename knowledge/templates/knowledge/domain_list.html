@@ -13,48 +13,44 @@
         <h1 class="text-2xl font-bold">Domains</h1>
         <p class="text-base-content/70">Manage domains for <strong>{{ product.name }}</strong></p>
     </div>
-    <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary">
+    <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-plus"></i> New Domain
     </a>
 </div>
 
 {% if domains %}
-<div class="grid gap-4">
-    {% for domain in domains %}
-    <div class="card bg-base-100 shadow">
-        <div class="card-body">
-            <h3 class="card-title">
-                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="hover:text-primary">
-                    {{ domain.name }}
+<div class="bg-base-100 rounded-lg shadow">
+    <ul class="menu p-0">
+        {% for domain in domains %}
+        <li class="border-b border-base-200 last:border-b-0">
+            <div class="flex items-center justify-between py-3 px-4 hover:bg-base-200 rounded-none">
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="flex-1 flex items-center gap-3">
+                    <i class="fa-solid fa-layer-group text-primary"></i>
+                    <div>
+                        <div class="font-medium">{{ domain.name }}</div>
+                        <div class="text-sm text-base-content/60">{{ domain.description|default:"No description"|truncatewords:12 }}</div>
+                    </div>
                 </a>
-            </h3>
-            <p class="text-base-content/70">{{ domain.description|default:"No description" }}</p>
-            <div class="card-actions justify-end">
-                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm">
-                    <i class="fa-solid fa-folder-open"></i> SubDomains
-                </a>
-                <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm">
-                    <i class="fa-solid fa-pen"></i> Edit
-                </a>
-                <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-sm text-error">
-                    <i class="fa-solid fa-trash"></i> Delete
-                </a>
+                <div class="flex gap-1">
+                    <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
-    {% endfor %}
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 {% else %}
-<div class="card bg-base-100 shadow">
-    <div class="card-body text-center py-12">
-        <i class="fa-solid fa-layer-group text-4xl text-base-content/30 mb-4"></i>
-        <p class="text-base-content/60">No domains yet. Create your first domain to organize requirements.</p>
-        <div class="mt-4">
-            <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary">
-                <i class="fa-solid fa-plus"></i> Create Domain
-            </a>
-        </div>
-    </div>
+<div class="bg-base-100 rounded-lg shadow p-8 text-center">
+    <i class="fa-solid fa-layer-group text-4xl text-base-content/30 mb-4"></i>
+    <p class="text-base-content/60 mb-4">No domains yet. Create your first domain to organize requirements.</p>
+    <a href="{% url 'knowledge:domain_create' product_id=product.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus"></i> Create Domain
+    </a>
 </div>
 {% endif %}
 {% endblock %}

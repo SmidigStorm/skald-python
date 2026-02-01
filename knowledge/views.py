@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
@@ -33,7 +33,8 @@ class DomainCreateView(ProductEditMixin, CreateView):
     def form_valid(self, form):
         form.instance.product = self.product
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A domain with this name already exists")
             return self.form_invalid(form)
@@ -56,7 +57,8 @@ class DomainUpdateView(ProductEditMixin, UpdateView):
 
     def form_valid(self, form):
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A domain with this name already exists")
             return self.form_invalid(form)
@@ -102,6 +104,7 @@ class SubDomainListView(ProductAccessMixin, ListView):
         context["domain"] = get_object_or_404(
             Domain, pk=self.kwargs.get("domain_id"), product=self.product
         )
+        context["all_domains"] = Domain.objects.filter(product=self.product)
         return context
 
 
@@ -122,12 +125,14 @@ class SubDomainCreateView(ProductEditMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
+        context["all_domains"] = Domain.objects.filter(product=self.product)
         return context
 
     def form_valid(self, form):
         form.instance.domain = self.get_domain()
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A subdomain with this name already exists in this domain")
             return self.form_invalid(form)
@@ -161,11 +166,13 @@ class SubDomainUpdateView(ProductEditMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
+        context["all_domains"] = Domain.objects.filter(product=self.product)
         return context
 
     def form_valid(self, form):
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A subdomain with this name already exists in this domain")
             return self.form_invalid(form)
@@ -198,6 +205,7 @@ class SubDomainDeleteView(ProductEditMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
+        context["all_domains"] = Domain.objects.filter(product=self.product)
         return context
 
     def get_success_url(self):
@@ -236,6 +244,7 @@ class CapabilityListView(ProductAccessMixin, ListView):
         )
         context["domain"] = domain
         context["subdomain"] = subdomain
+        context["all_subdomains"] = SubDomain.objects.filter(domain=domain)
         return context
 
 
@@ -264,12 +273,14 @@ class CapabilityCreateView(ProductEditMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
         context["subdomain"] = self.get_subdomain()
+        context["all_subdomains"] = SubDomain.objects.filter(domain=self.get_domain())
         return context
 
     def form_valid(self, form):
         form.instance.subdomain = self.get_subdomain()
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A capability with this name already exists in this subdomain")
             return self.form_invalid(form)
@@ -315,11 +326,13 @@ class CapabilityUpdateView(ProductEditMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
         context["subdomain"] = self.get_subdomain()
+        context["all_subdomains"] = SubDomain.objects.filter(domain=self.get_domain())
         return context
 
     def form_valid(self, form):
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                return super().form_valid(form)
         except IntegrityError:
             form.add_error("name", "A capability with this name already exists in this subdomain")
             return self.form_invalid(form)
@@ -364,6 +377,7 @@ class CapabilityDeleteView(ProductEditMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["domain"] = self.get_domain()
         context["subdomain"] = self.get_subdomain()
+        context["all_subdomains"] = SubDomain.objects.filter(domain=self.get_domain())
         return context
 
     def get_success_url(self):
