@@ -58,11 +58,11 @@ def view_domains_in_product(client: Client, db: Any, product_name: str) -> HttpR
 def view_domain(
     client: Client, db: Any, domain_name: str, current_product: dict
 ) -> HttpResponse:
-    """View a domain (via subdomain list which shows domain info)."""
+    """View a domain (via edit page which shows domain info)."""
     product = current_product.get("product")
     domain = Domain.objects.get(name=domain_name, product=product)
     return client.get(
-        f"/products/{domain.product.pk}/domains/{domain.pk}/subdomains/"
+        f"/products/{domain.product.pk}/domains/{domain.pk}/edit/"
     )
 
 
@@ -150,9 +150,9 @@ def see_domain_count(list_response: HttpResponse, count: int) -> None:
     import re
 
     content = list_response.content.decode()
-    # Count list items in the domain list (border-b pattern for list items)
-    list_item_count = len(re.findall(r'<li class="border-b border-base-200', content))
-    assert list_item_count == count
+    # Count table rows in the domain list (hover pattern for table rows)
+    row_count = len(re.findall(r'<tr class="hover">', content))
+    assert row_count == count
 
 
 @then(parsers.parse('I see the domain name "{domain_name}"'))

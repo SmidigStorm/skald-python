@@ -1,19 +1,10 @@
 {% extends "knowledge/base.html" %}
 
-{% block title %}Delete {{ object.name }} - {{ subdomain.name }}{% endblock %}
-
-{% block sidebar_nav %}
-{% include "knowledge/components/subdomain_nav.html" %}
-{% endblock %}
-
-{% block mobile_sidebar_nav %}
-{% include "knowledge/components/subdomain_nav.html" %}
-{% endblock %}
+{% block title %}Delete {{ object.name }} - {{ product.name }}{% endblock %}
 
 {% block breadcrumb_items %}
 <li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
-<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
-<li><a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">{{ subdomain.name }}</a></li>
+<li><a href="{% url 'knowledge:capability_list' product_id=product.pk %}">Capabilities</a></li>
 <li>Delete {{ object.name }}</li>
 {% endblock %}
 
@@ -27,10 +18,13 @@
 
             <div class="mb-6">
                 <p class="text-lg">Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+                <p class="text-base-content/60 mt-2">
+                    This capability belongs to: <strong>{{ object.subdomain.domain.name }}</strong> / <strong>{{ object.subdomain.name }}</strong>
+                </p>
             </div>
 
             <div class="flex gap-2 justify-end">
-                <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost">Cancel</a>
+                <a href="{% url 'knowledge:capability_list' product_id=product.pk %}" class="btn btn-ghost">Cancel</a>
                 <button type="submit" class="btn btn-error">
                     <i class="fa-solid fa-trash"></i> Delete Capability
                 </button>

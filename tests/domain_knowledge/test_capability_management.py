@@ -56,12 +56,10 @@ def create_capability_with_name(
 def view_capabilities_in_subdomain(
     client: Client, db: Any, subdomain_name: str, current_product: dict
 ) -> HttpResponse:
-    """View capabilities in a subdomain."""
+    """View capabilities in a product (flat list)."""
     domain = current_product.get("domain")
-    subdomain = SubDomain.objects.get(name=subdomain_name, domain=domain)
-    return client.get(
-        f"/products/{domain.product.pk}/domains/{domain.pk}/subdomains/{subdomain.pk}/capabilities/"
-    )
+    # Now uses flat product-level list
+    return client.get(f"/products/{domain.product.pk}/capabilities/")
 
 
 @when(
@@ -180,9 +178,9 @@ def see_capability_count(list_response: HttpResponse, count: int) -> None:
     import re
 
     content = list_response.content.decode()
-    # Count list items in the capability list (border-b pattern for list items)
-    list_item_count = len(re.findall(r'<li class="border-b border-base-200', content))
-    assert list_item_count == count
+    # Count table rows in the capability list (hover pattern for table rows)
+    row_count = len(re.findall(r'<tr class="hover">', content))
+    assert row_count == count
 
 
 @then(parsers.parse('I see the capability name "{capability_name}"'))

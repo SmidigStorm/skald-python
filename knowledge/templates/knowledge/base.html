@@ -1,11 +1,68 @@
 {% extends "base.html" %}
 
 {% block sidebar_nav %}
-{% include "knowledge/components/knowledge_nav.html" %}
+<li class="menu-title">{{ product.name }}</li>
+
+<!-- Domain Knowledge category -->
+<li>
+    <details open>
+        <summary><i class="fa-solid fa-book"></i> Domain Knowledge</summary>
+        <ul>
+            <li>
+                <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="{% if active_section == 'domains' %}active{% endif %}">
+                    <i class="fa-solid fa-layer-group"></i> Domains
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk %}" class="{% if active_section == 'subdomains' %}active{% endif %}">
+                    <i class="fa-solid fa-folder"></i> SubDomains
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'knowledge:capability_list' product_id=product.pk %}" class="{% if active_section == 'capabilities' %}active{% endif %}">
+                    <i class="fa-solid fa-puzzle-piece"></i> Capabilities
+                </a>
+            </li>
+        </ul>
+    </details>
+</li>
+
+<li class="mt-4">
+    <a href="{% url 'core:home' %}">
+        <i class="fa-solid fa-arrow-left"></i> Back to Products
+    </a>
+</li>
 {% endblock %}
 
 {% block mobile_sidebar_nav %}
-{% include "knowledge/components/knowledge_nav.html" %}
+<li class="menu-title">{{ product.name }}</li>
+<li>
+    <details open>
+        <summary><i class="fa-solid fa-book"></i> Domain Knowledge</summary>
+        <ul>
+            <li>
+                <a href="{% url 'knowledge:domain_list' product_id=product.pk %}">
+                    <i class="fa-solid fa-layer-group"></i> Domains
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk %}">
+                    <i class="fa-solid fa-folder"></i> SubDomains
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'knowledge:capability_list' product_id=product.pk %}">
+                    <i class="fa-solid fa-puzzle-piece"></i> Capabilities
+                </a>
+            </li>
+        </ul>
+    </details>
+</li>
+<li class="mt-4">
+    <a href="{% url 'core:home' %}">
+        <i class="fa-solid fa-arrow-left"></i> Back to Products
+    </a>
+</li>
 {% endblock %}
 
 {% block breadcrumb %}

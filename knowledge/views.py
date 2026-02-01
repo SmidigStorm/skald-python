@@ -22,6 +22,11 @@ class DomainListView(ProductAccessMixin, ListView):
     def get_queryset(self):
         return Domain.objects.filter(product=self.product)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["active_section"] = "domains"
+        return context
+
 
 class DomainCreateView(ProductEditMixin, CreateView):
     """Create a new domain in a product."""
@@ -89,22 +94,20 @@ class DomainDeleteView(ProductEditMixin, DeleteView):
 
 
 class SubDomainListView(ProductAccessMixin, ListView):
-    """List all subdomains in a domain."""
+    """List all subdomains in a product."""
 
     model = SubDomain
     template_name = "knowledge/subdomain_list.html"
     context_object_name = "subdomains"
 
     def get_queryset(self):
-        domain_id = self.kwargs.get("domain_id")
-        return SubDomain.objects.filter(domain_id=domain_id, domain__product=self.product)
+        return SubDomain.objects.filter(domain__product=self.product).select_related(
+            "domain"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["domain"] = get_object_or_404(
-            Domain, pk=self.kwargs.get("domain_id"), product=self.product
-        )
-        context["all_domains"] = Domain.objects.filter(product=self.product)
+        context["active_section"] = "subdomains"
         return context
 
 
@@ -141,7 +144,7 @@ class SubDomainCreateView(ProductEditMixin, CreateView):
         messages.success(self.request, f'SubDomain "{self.object.name}" created.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
+            kwargs={"product_id": self.product.pk},
         )
 
 
@@ -181,7 +184,7 @@ class SubDomainUpdateView(ProductEditMixin, UpdateView):
         messages.success(self.request, f'SubDomain "{self.object.name}" updated.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
+            kwargs={"product_id": self.product.pk},
         )
 
 
@@ -212,7 +215,7 @@ class SubDomainDeleteView(ProductEditMixin, DeleteView):
         messages.success(self.request, f'SubDomain "{self.object.name}" deleted.')
         return reverse(
             "knowledge:subdomain_list",
-            kwargs={"product_id": self.product.pk, "domain_id": self.get_domain().pk},
+            kwargs={"product_id": self.product.pk},
         )
 
 
@@ -222,29 +225,20 @@ class SubDomainDeleteView(ProductEditMixin, DeleteView):
 
 
 class CapabilityListView(ProductAccessMixin, ListView):
-    """List all capabilities in a subdomain."""
+    """List all capabilities in a product."""
 
     model = Capability
     template_name = "knowledge/capability_list.html"
     context_object_name = "capabilities"
 
     def get_queryset(self):
-        subdomain_id = self.kwargs.get("subdomain_id")
         return Capability.objects.filter(
-            subdomain_id=subdomain_id, subdomain__domain__product=self.product
-        )
+            subdomain__domain__product=self.product
+        ).select_related("subdomain", "subdomain__domain")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        domain = get_object_or_404(
-            Domain, pk=self.kwargs.get("domain_id"), product=self.product
-        )
-        subdomain = get_object_or_404(
-            SubDomain, pk=self.kwargs.get("subdomain_id"), domain=domain
-        )
-        context["domain"] = domain
-        context["subdomain"] = subdomain
-        context["all_subdomains"] = SubDomain.objects.filter(domain=domain)
+        context["active_section"] = "capabilities"
         return context
 
 
@@ -289,11 +283,7 @@ class CapabilityCreateView(ProductEditMixin, CreateView):
         messages.success(self.request, f'Capability "{self.object.name}" created.')
         return reverse(
             "knowledge:capability_list",
-            kwargs={
-                "product_id": self.product.pk,
-                "domain_id": self.get_domain().pk,
-                "subdomain_id": self.get_subdomain().pk,
-            },
+            kwargs={"product_id": self.product.pk},
         )
 
 
@@ -341,11 +331,7 @@ class CapabilityUpdateView(ProductEditMixin, UpdateView):
         messages.success(self.request, f'Capability "{self.object.name}" updated.')
         return reverse(
             "knowledge:capability_list",
-            kwargs={
-                "product_id": self.product.pk,
-                "domain_id": self.get_domain().pk,
-                "subdomain_id": self.get_subdomain().pk,
-            },
+            kwargs={"product_id": self.product.pk},
         )
 
 
@@ -384,9 +370,5 @@ class CapabilityDeleteView(ProductEditMixin, DeleteView):
         messages.success(self.request, f'Capability "{self.object.name}" deleted.')
         return reverse(
             "knowledge:capability_list",
-            kwargs={
-                "product_id": self.product.pk,
-                "domain_id": self.get_domain().pk,
-                "subdomain_id": self.get_subdomain().pk,
-            },
+            kwargs={"product_id": self.product.pk},
         )

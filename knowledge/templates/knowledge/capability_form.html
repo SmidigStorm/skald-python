@@ -2,19 +2,10 @@
 
 {% block title %}{% if object %}Edit{% else %}New{% endif %} Capability - {{ subdomain.name }}{% endblock %}
 
-{% block sidebar_nav %}
-{% include "knowledge/components/subdomain_nav.html" %}
-{% endblock %}
-
-{% block mobile_sidebar_nav %}
-{% include "knowledge/components/subdomain_nav.html" %}
-{% endblock %}
-
 {% block breadcrumb_items %}
 <li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
-<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
-<li><a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}">{{ subdomain.name }}</a></li>
-<li>{% if object %}Edit {{ object.name }}{% else %}New Capability{% endif %}</li>
+<li><a href="{% url 'knowledge:capability_list' product_id=product.pk %}">Capabilities</a></li>
+<li>{% if object %}Edit {{ object.name }}{% else %}New Capability in {{ subdomain.name }}{% endif %}</li>
 {% endblock %}
 
 {% block content %}
@@ -44,6 +35,21 @@
             </div>
             {% endif %}
 
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">Domain</span>
+                    </label>
+                    <input type="text" class="input input-bordered w-full bg-base-200" value="{{ domain.name }}" disabled>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">SubDomain</span>
+                    </label>
+                    <input type="text" class="input input-bordered w-full bg-base-200" value="{{ subdomain.name }}" disabled>
+                </div>
+            </div>
+
             <div class="form-control mb-4">
                 <label class="label" for="id_name">
                     <span class="label-text font-medium">Name <span class="text-error">*</span></span>
@@ -65,7 +71,7 @@
             </div>
 
             <div class="flex gap-2 justify-end">
-                <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost">Cancel</a>
+                <a href="{% url 'knowledge:capability_list' product_id=product.pk %}" class="btn btn-ghost">Cancel</a>
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-check"></i>
                     {% if object %}Update{% else %}Create{% endif %} Capability

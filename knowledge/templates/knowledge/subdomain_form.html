@@ -2,18 +2,10 @@
 
 {% block title %}{% if object %}Edit{% else %}New{% endif %} SubDomain - {{ domain.name }}{% endblock %}
 
-{% block sidebar_nav %}
-{% include "knowledge/components/domain_nav.html" %}
-{% endblock %}
-
-{% block mobile_sidebar_nav %}
-{% include "knowledge/components/domain_nav.html" %}
-{% endblock %}
-
 {% block breadcrumb_items %}
 <li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
-<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
-<li>{% if object %}Edit {{ object.name }}{% else %}New SubDomain{% endif %}</li>
+<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk %}">SubDomains</a></li>
+<li>{% if object %}Edit {{ object.name }}{% else %}New SubDomain in {{ domain.name }}{% endif %}</li>
 {% endblock %}
 
 {% block content %}
@@ -44,6 +36,13 @@
             {% endif %}
 
             <div class="form-control mb-4">
+                <label class="label">
+                    <span class="label-text font-medium">Domain</span>
+                </label>
+                <input type="text" class="input input-bordered w-full bg-base-200" value="{{ domain.name }}" disabled>
+            </div>
+
+            <div class="form-control mb-4">
                 <label class="label" for="id_name">
                     <span class="label-text font-medium">Name <span class="text-error">*</span></span>
                 </label>
@@ -64,7 +63,7 @@
             </div>
 
             <div class="flex gap-2 justify-end">
-                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost">Cancel</a>
+                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk %}" class="btn btn-ghost">Cancel</a>
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-check"></i>
                     {% if object %}Update{% else %}Create{% endif %} SubDomain

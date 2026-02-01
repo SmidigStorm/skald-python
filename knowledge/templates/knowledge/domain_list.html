@@ -19,30 +19,42 @@
 </div>
 
 {% if domains %}
-<div class="bg-base-100 rounded-lg shadow">
-    <ul class="menu p-0">
-        {% for domain in domains %}
-        <li class="border-b border-base-200 last:border-b-0">
-            <div class="flex items-center justify-between py-3 px-4 hover:bg-base-200 rounded-none">
-                <a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}" class="flex-1 flex items-center gap-3">
-                    <i class="fa-solid fa-layer-group text-primary"></i>
-                    <div>
-                        <div class="font-medium">{{ domain.name }}</div>
-                        <div class="text-sm text-base-content/60">{{ domain.description|default:"No description"|truncatewords:12 }}</div>
+<div class="bg-base-100 rounded-lg shadow overflow-x-auto">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="w-40"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for domain in domains %}
+            <tr class="hover">
+                <td>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-primary"></i>
+                        <span class="font-medium">{{ domain.name }}</span>
                     </div>
-                </a>
-                <div class="flex gap-1">
-                    <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
-                        <i class="fa-solid fa-pen"></i>
-                    </a>
-                    <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </div>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+                </td>
+                <td class="text-base-content/60">{{ domain.description|default:"—"|truncatewords:12 }}</td>
+                <td>
+                    <div class="flex gap-1 justify-end">
+                        <a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs" title="Add SubDomain">
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                        <a href="{% url 'knowledge:domain_update' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="{% url 'knowledge:domain_delete' product_id=product.pk domain_id=domain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% else %}
 <div class="bg-base-100 rounded-lg shadow p-8 text-center">

@@ -26,9 +26,9 @@ urlpatterns = [
         views.DomainDeleteView.as_view(),
         name="domain_delete",
     ),
-    # SubDomain URLs
+    # SubDomain URLs - flat list at product level
     path(
-        "products/<int:product_id>/domains/<int:domain_id>/subdomains/",
+        "products/<int:product_id>/subdomains/",
         views.SubDomainListView.as_view(),
         name="subdomain_list",
     ),
@@ -47,9 +47,9 @@ urlpatterns = [
         views.SubDomainDeleteView.as_view(),
         name="subdomain_delete",
     ),
-    # Capability URLs
+    # Capability URLs - flat list at product level
     path(
-        "products/<int:product_id>/domains/<int:domain_id>/subdomains/<int:subdomain_id>/capabilities/",
+        "products/<int:product_id>/capabilities/",
         views.CapabilityListView.as_view(),
         name="capability_list",
     ),

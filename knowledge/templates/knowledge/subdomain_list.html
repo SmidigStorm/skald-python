@@ -1,18 +1,9 @@
 {% extends "knowledge/base.html" %}
 
-{% block title %}SubDomains - {{ domain.name }} - {{ product.name }}{% endblock %}
-
-{% block sidebar_nav %}
-{% include "knowledge/components/domain_nav.html" %}
-{% endblock %}
-
-{% block mobile_sidebar_nav %}
-{% include "knowledge/components/domain_nav.html" %}
-{% endblock %}
+{% block title %}SubDomains - {{ product.name }}{% endblock %}
 
 {% block breadcrumb_items %}
 <li><a href="{% url 'knowledge:domain_list' product_id=product.pk %}">{{ product.name }}</a></li>
-<li><a href="{% url 'knowledge:subdomain_list' product_id=product.pk domain_id=domain.pk %}">{{ domain.name }}</a></li>
 <li>SubDomains</li>
 {% endblock %}
 
@@ -20,46 +11,60 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h1 class="text-2xl font-bold">SubDomains</h1>
-        <p class="text-base-content/70">Manage subdomains for <strong>{{ domain.name }}</strong></p>
-        {% if domain.description %}<p class="text-sm text-base-content/50 mt-1">{{ domain.description }}</p>{% endif %}
+        <p class="text-base-content/70">All subdomains in <strong>{{ product.name }}</strong></p>
     </div>
-    <a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-plus"></i> New SubDomain
-    </a>
 </div>
 
 {% if subdomains %}
-<div class="bg-base-100 rounded-lg shadow">
-    <ul class="menu p-0">
-        {% for subdomain in subdomains %}
-        <li class="border-b border-base-200 last:border-b-0">
-            <div class="flex items-center justify-between py-3 px-4 hover:bg-base-200 rounded-none">
-                <a href="{% url 'knowledge:capability_list' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="flex-1 flex items-center gap-3">
-                    <i class="fa-solid fa-folder text-primary"></i>
-                    <div>
-                        <div class="font-medium">{{ subdomain.name }}</div>
-                        <div class="text-sm text-base-content/60">{{ subdomain.description|default:"No description"|truncatewords:12 }}</div>
+<div class="bg-base-100 rounded-lg shadow overflow-x-auto">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Domain</th>
+                <th>Description</th>
+                <th class="w-24"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subdomain in subdomains %}
+            <tr class="hover">
+                <td>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder text-primary"></i>
+                        <span class="font-medium">{{ subdomain.name }}</span>
                     </div>
-                </a>
-                <div class="flex gap-1">
-                    <a href="{% url 'knowledge:subdomain_update' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
-                        <i class="fa-solid fa-pen"></i>
+                </td>
+                <td>
+                    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="link link-hover text-base-content/70">
+                        {{ subdomain.domain.name }}
                     </a>
-                    <a href="{% url 'knowledge:subdomain_delete' product_id=product.pk domain_id=domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </div>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+                </td>
+                <td class="text-base-content/60">{{ subdomain.description|default:"—"|truncatewords:12 }}</td>
+                <td>
+                    <div class="flex gap-1 justify-end">
+                        <a href="{% url 'knowledge:capability_create' product_id=product.pk domain_id=subdomain.domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs" title="Add Capability">
+                            <i class="fa-solid fa-plus"></i>
+                        </a>
+                        <a href="{% url 'knowledge:subdomain_update' product_id=product.pk domain_id=subdomain.domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="{% url 'knowledge:subdomain_delete' product_id=product.pk domain_id=subdomain.domain.pk subdomain_id=subdomain.pk %}" class="btn btn-ghost btn-xs text-error" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% else %}
 <div class="bg-base-100 rounded-lg shadow p-8 text-center">
     <i class="fa-solid fa-folder text-4xl text-base-content/30 mb-4"></i>
-    <p class="text-base-content/60 mb-4">No subdomains yet. Create your first subdomain to further organize this domain.</p>
-    <a href="{% url 'knowledge:subdomain_create' product_id=product.pk domain_id=domain.pk %}" class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-plus"></i> Create SubDomain
+    <p class="text-base-content/60 mb-4">No subdomains yet. Create a domain first, then add subdomains to it.</p>
+    <a href="{% url 'knowledge:domain_list' product_id=product.pk %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-layer-group"></i> Go to Domains
     </a>
 </div>
 {% endif %}
