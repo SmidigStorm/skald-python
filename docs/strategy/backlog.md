@@ -8,3 +8,4 @@
 | 4 | Add Django REST Framework | Feature | done | Install and configure DRF for API endpoints |
 | 5 | Set up pytest + pytest-bdd | Feature | done | Testing infrastructure with pytest-django and BDD support |
 | 6 | Configure Ruff | Tech Debt | done | Set up Ruff for linting and formatting with project conventions |
+| 7 | Implement UI with DaisyUI | Feature | backlog | Integrate Tailwind CSS + DaisyUI for consistent design system, sidebar navigation, forms, and toast notifications |
